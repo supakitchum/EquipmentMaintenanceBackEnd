@@ -16,7 +16,7 @@ router.post('/login', async (req, res, next) => {
       if (bcrypt.compareSync(req.body.password, user.password)) {
         var token = await jwt.sign({
           _id: user.id,
-          username: user.email
+          email: user.email
         }, secret, { expiresIn: 60 * 120 })
         await AccessToken.update({ userid: user.id }, { userid: user.id, token: token }, { upsert: true })
         res.send({

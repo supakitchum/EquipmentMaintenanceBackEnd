@@ -176,11 +176,11 @@ router.delete('/users', async (req, res, next) => {
 router.post('/users', [
   check('firstname').not().isEmpty(),
   check('lastname').not().isEmpty(),
-  check('age').not().isEmpty(),
-  check('money').not().isEmpty(),
-  check('birthday').not().isEmpty(),
+  check('position').not().isEmpty(),
+  check('department').not().isEmpty(),
+  check('dateofbirth').not().isEmpty(),
   check('phone').not().isEmpty().isLength({ max: 10 }),
-  check('department').not().isEmpty().isIn(['CNX', 'BKK', 'KKC']).withMessage('Department invalid.')
+  check('email').not().isEmpty().isIn(['CNX', 'BKK', 'KKC']).withMessage('Department invalid.')
 ], async (req, res, next) => {
   var sub = req.body.birthday.split('/')
   const newDate = new Date(parseInt(sub[2]) - 543, parseInt(sub[1]) - 1, parseInt(sub[0]) + 1).toISOString().slice(0, 10)
