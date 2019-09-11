@@ -5,6 +5,7 @@ const AccessToken = require('../model/access_token')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 var secret = 'inet'
+var test = 'test'
 /* GET users listing. */
 router.post('/login', async (req, res, next) => {
   try {
