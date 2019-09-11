@@ -126,4 +126,30 @@ router.get('/repair/history', async (req, res, next) => {
     }
 })
 
+router.put('/repair', async (req, res, next) => {
+    var repair = await Repair.findOne({ _id: req.body._id})
+    // Check duplicate
+    if (repair) {
+        repair.status = req.body.status,
+        repair.update_date = new Date()
+        try {
+            repair.save()
+        } catch (e) {
+            res.status(400).send({
+                error: {
+                    status: 400,
+                    message: e
+                }
+            })
+        }
+        res.status(201).send('Updated status success')
+    } else {
+        res.status(200).send({
+            error: {
+                status: 200,
+                message: 'Not found repair for update.'
+            }
+        })
+    }
+})
 module.exports = router

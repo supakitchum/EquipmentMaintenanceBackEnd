@@ -3,6 +3,7 @@ var router = express.Router()
 const UserDetail = require('../model/users_detail')
 const AccessToken = require('../model/access_token')
 const User = require('../model/users')
+const Repair = require('../model/repair')
 const jwt = require('jsonwebtoken')
 const { check, validationResult } = require('express-validator')
 const bcrypt = require('bcrypt')
@@ -88,6 +89,33 @@ router.put('/technician/profile', [
             error: {
                 status: 200,
                 message: 'Not found user for update.'
+            }
+        })
+    }
+})
+
+router.get('/technician/repair', async (req, res, next) => {
+    var decoded = jwt.verify(req.headers.token, secret)
+    try {
+        var repair = await Repair.find({
+            id_employee_user: decoded._id
+        })
+        console.log(repair)
+    } catch (e) {
+        res.send({
+            results: {
+                status: 500,
+                data: [e]
+            }
+        })
+    }
+    if (repair) {
+        res.send(repair)
+    } else {
+        res.send({
+            results: {
+                status: 200,
+                data: 'Data not found.'
             }
         })
     }
