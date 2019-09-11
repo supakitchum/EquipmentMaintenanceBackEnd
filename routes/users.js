@@ -10,21 +10,12 @@ const { check, validationResult } = require('express-validator')
 var secret = 'inet'
 
 router.get('/users', async (req, res, next) => {
+    var decoded = jwt.verify(req.headers.token, secret)
   try {
-    var users = await UserDetail.aggregate([
-      {
-        $sort: { created_at: -1 }
-      },
-      {
-        $lookup:
-          {
-            from: 'skills',
-            localField: 'userid',
-            foreignField: 'userid',
-            as: 'skills'
-          }
-      }
-    ])
+    var users = await User.findOne({
+        email: decoded.email
+    })
+    console.log(users)
   } catch (e) {
     res.send({
       results: {
@@ -33,13 +24,8 @@ router.get('/users', async (req, res, next) => {
       }
     })
   }
-  if (users.length > 0) {
-    res.send({
-      results: {
-        status: 200,
-        data: [users]
-      }
-    })
+  if (users) {
+    res.send(users)
   } else {
     res.send({
       results: {
@@ -176,14 +162,7 @@ router.delete('/users', async (req, res, next) => {
 })
 
 router.post('/users', [
-  check('firstname').not().isEmpty(),
-  check('lastname').not().isEmpty(),
-  check('position').not().isEmpty(),
-  check('department').not().isEmpty(),
-  check('dateofbirth').not().isEmpty(),
-  check('phone').not().isEmpty().isLength({ max: 10 }),
   check('email').not().isEmpty(),
-  check('password').not().isEmpty(),
   check('type').not().isEmpty()
 ], async (req, res, next) => {
   // var sub = req.body.birthday.split('/')
@@ -261,14 +240,7 @@ router.post('/users', [
 
 // Update users
 router.put('/users', [
-  check('firstname').not().isEmpty(),
-  check('lastname').not().isEmpty(),
-  check('position').not().isEmpty(),
-  check('department').not().isEmpty(),
-  check('dateofbirth').not().isEmpty(),
-  check('phone').not().isEmpty().isLength({ max: 10 }),
   check('email').not().isEmpty(),
-  check('password').not().isEmpty(),
   check('type').not().isEmpty()
 ], async (req, res, next) => {
   // var sub = req.body.birthday.split('/')
@@ -306,8 +278,7 @@ router.put('/users', [
       user.dateofbirth= req.body.dateofbirth,
       user.phone= req.body.phone,
       user.email= req.body.email,
-      user.password= hash,
-      user.type= req.body.type
+      user.password= hash
 
     try {
       user.save()
