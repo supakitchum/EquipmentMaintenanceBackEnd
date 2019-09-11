@@ -4,6 +4,8 @@ const UserDetail = require('../model/users_detail')
 const AccessToken = require('../model/access_token')
 const User = require('../model/users')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 const { check, validationResult } = require('express-validator')
 var secret = 'inet'
 
@@ -180,10 +182,12 @@ router.post('/users', [
   check('department').not().isEmpty(),
   check('dateofbirth').not().isEmpty(),
   check('phone').not().isEmpty().isLength({ max: 10 }),
-  check('email').not().isEmpty().isIn(['CNX', 'BKK', 'KKC']).withMessage('Department invalid.')
+  check('email').not().isEmpty(),
+  check('password').not().isEmpty(),
+  check('type').not().isEmpty()
 ], async (req, res, next) => {
-  var sub = req.body.birthday.split('/')
-  const newDate = new Date(parseInt(sub[2]) - 543, parseInt(sub[1]) - 1, parseInt(sub[0]) + 1).toISOString().slice(0, 10)
+  // var sub = req.body.birthday.split('/')
+  // const newDate = new Date(parseInt(sub[2]) - 543, parseInt(sub[1]) - 1, parseInt(sub[0]) + 1).toISOString().slice(0, 10)
   // Validation from data
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -197,6 +201,7 @@ router.post('/users', [
 
   try {
     var decoded = jwt.verify(req.headers.token, secret)
+    console.log(decoded)
   } catch (e) {
     await AccessToken.deleteOne({ token: req.headers.token })
     res.status(402).send({
@@ -208,31 +213,32 @@ router.post('/users', [
   }
 
   // Check duplicate
-  var user = await UserDetail.findOne({
-    userid: decoded._id
+  var user = await User.findOne({
+    email: req.body.email
   })
   if (user) {
     res.status(400).send({
       error: {
         status: 400,
-        message: 'Duplicate Data'
+        message: 'Duplicate Email'
       }
     })
   } else {
     if (req.headers.token) {
-      var newDetail = new UserDetail({
-        userid: decoded._id,
+      var hash = bcrypt.hashSync(req.body.password, saltRounds)
+      var newUser = new User({
         firstname: req.body.firstname,
         lastname: req.body.lastname,
-        age: req.body.age,
-        money: req.body.money,
-        birthday: newDate,
-        phone: req.body.phone,
+        position: req.body.position,
         department: req.body.department,
-        created_at: new Date()
+        dateofbirth: req.body.dateofbirth,
+        phone: req.body.phone,
+        email: req.body.email,
+        password: hash,
+        type: req.body.type
       })
       try {
-        newDetail.save()
+        newUser.save()
       } catch (e) {
         res.status(400).send({
           error: {
@@ -257,14 +263,16 @@ router.post('/users', [
 router.put('/users', [
   check('firstname').not().isEmpty(),
   check('lastname').not().isEmpty(),
-  check('age').not().isEmpty(),
-  check('money').not().isEmpty(),
-  check('birthday').not().isEmpty(),
+  check('position').not().isEmpty(),
+  check('department').not().isEmpty(),
+  check('dateofbirth').not().isEmpty(),
   check('phone').not().isEmpty().isLength({ max: 10 }),
-  check('department').not().isEmpty().isIn(['CNX', 'BKK', 'KKC']).withMessage('Department invalid.')
+  check('email').not().isEmpty(),
+  check('password').not().isEmpty(),
+  check('type').not().isEmpty()
 ], async (req, res, next) => {
-  var sub = req.body.birthday.split('/')
-  const newDate = new Date(parseInt(sub[2]) - 543, parseInt(sub[1]) - 1, parseInt(sub[0]) + 1).toISOString().slice(0, 10)
+  // var sub = req.body.birthday.split('/')
+  // const newDate = new Date(parseInt(sub[2]) - 543, parseInt(sub[1]) - 1, parseInt(sub[0]) + 1).toISOString().slice(0, 10)
   // Validation from data
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -286,18 +294,21 @@ router.put('/users', [
       }
     })
   }
-  var user = await UserDetail.findOne({ userid: decoded._id })
+  var user = await User.findOne({ _id: decoded._id })
   // Check duplicate
   if (user) {
+    var hash = bcrypt.hashSync(req.body.password, saltRounds)
     // eslint-disable-next-line no-sequences
-    user.firstname = req.body.firstname
-    user.lastname = req.body.lastname
-    user.age = req.body.age
-    user.money = req.body.money
-    user.birthday = newDate
-    user.phone = req.body.phone
-    user.department = req.body.department
-    user.updated_at = new Date()
+      user.firstname= req.body.firstname,
+      user.lastname= req.body.lastname,
+      user.position= req.body.position,
+      user.department= req.body.department,
+      user.dateofbirth= req.body.dateofbirth,
+      user.phone= req.body.phone,
+      user.email= req.body.email,
+      user.password= hash,
+      user.type= req.body.type
+
     try {
       user.save()
     } catch (e) {
