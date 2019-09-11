@@ -10,13 +10,13 @@ var test = 'test'
 router.post('/login', async (req, res, next) => {
   try {
     var user = await User.findOne({
-      username: req.body.username
+      email: req.body.email
     })
     if (user) {
       if (bcrypt.compareSync(req.body.password, user.password)) {
         var token = await jwt.sign({
           _id: user.id,
-          username: user.username
+          username: user.email
         }, secret, { expiresIn: 60 * 120 })
         await AccessToken.update({ userid: user.id }, { userid: user.id, token: token }, { upsert: true })
         res.send({
