@@ -9,7 +9,7 @@ var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
 var registerRouter = require('./routes/register')
 var loginRouter = require('./routes/login')
-var skillRouter = require('./routes/skills')
+var repairRouter = require('./routes/repair')
 var contactRouter = require('./routes/contacts')
 var technicianRouter = require('./routes/technician')
 require('dotenv').config()
@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/api/v1', [indexRouter, usersRouter, registerRouter, loginRouter, skillRouter, contactRouter,technicianRouter])
+app.use('/api/v1', [indexRouter, usersRouter, registerRouter, loginRouter, skillRouter, contactRouter])
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
