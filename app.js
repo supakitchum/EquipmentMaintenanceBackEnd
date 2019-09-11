@@ -11,6 +11,7 @@ var registerRouter = require('./routes/register')
 var loginRouter = require('./routes/login')
 var skillRouter = require('./routes/skills')
 var contactRouter = require('./routes/contacts')
+var technicianRouter = require('./routes/technician')
 require('dotenv').config()
 
 var app = express()
@@ -35,7 +36,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/api/v1', [indexRouter, usersRouter, registerRouter, loginRouter, skillRouter, contactRouter])
+app.use('/api/v1', [indexRouter, usersRouter, registerRouter, loginRouter, skillRouter, contactRouter,technicianRouter])
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
