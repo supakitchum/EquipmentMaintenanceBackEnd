@@ -6,7 +6,7 @@ const saltRounds = 10
 /* GET users listing. */
 router.post('/register', async (req, res, next) => {
   var user = await User.findOne({
-    username: req.body.username
+    email: req.body.email
   })
   if (user) {
     res.status(400).send({
@@ -18,7 +18,7 @@ router.post('/register', async (req, res, next) => {
   } else {
     var hash = bcrypt.hashSync(req.body.password, saltRounds)
     var newuser = new User({
-      username: req.body.username,
+      email: req.body.email,
       password: hash
     })
     try {
