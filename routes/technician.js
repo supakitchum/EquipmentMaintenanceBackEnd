@@ -11,7 +11,7 @@ const saltRounds = 10
 var secret = 'inet'
 
 
-router.get('/technician/profile', async (req, res, next) => {
+router.get('/technician', async (req, res, next) => {
     try {
         var decoded = jwt.verify(req.headers.token, secret)
         // res.send(decoded)
@@ -32,7 +32,7 @@ router.get('/technician/profile', async (req, res, next) => {
     }
 })
 
-router.put('/technician/profile', [
+router.put('/technician', [
     check('email').not().isEmpty(),
     check('type').not().isEmpty()
 ], async (req, res, next) => {
@@ -93,12 +93,12 @@ router.put('/technician/profile', [
         })
     }
 })
-
 router.get('/technician/repair', async (req, res, next) => {
     var decoded = jwt.verify(req.headers.token, secret)
     try {
         var repair = await Repair.find({
-            id_employee_user: decoded._id
+            id_employee_user: decoded._id,
+            status: '2'
         })
         console.log(repair)
     } catch (e) {
@@ -116,6 +116,61 @@ router.get('/technician/repair', async (req, res, next) => {
             results: {
                 status: 200,
                 data: 'Data not found.'
+            }
+        })
+    }
+})
+
+router.get('/technician/repair/history', async (req, res, next) => {
+    var decoded = jwt.verify(req.headers.token, secret)
+    try {
+        var repair = await Repair.find({
+            id_employee_user: decoded._id,
+            status: '3'
+        })
+        console.log(repair)
+    } catch (e) {
+        res.send({
+            results: {
+                status: 500,
+                data: [e]
+            }
+        })
+    }
+    if (repair) {
+        res.send(repair)
+    } else {
+        res.send({
+            results: {
+                status: 200,
+                data: 'Data not found.'
+            }
+        })
+    }
+})
+
+router.put('/technician/repair', async (req, res, next) => {
+    var repair = await Repair.findOne({ _id: req.body._id})
+    // Check duplicate
+    if (repair) {
+        repair.status = req.body.status,
+            repair.update_date = new Date()
+        try {
+            repair.save()
+        } catch (e) {
+            res.status(400).send({
+                error: {
+                    status: 400,
+                    message: e
+                }
+            })
+        }
+        res.status(201).send('Updated status success')
+    } else {
+        res.status(200).send({
+            error: {
+                status: 200,
+                message: 'Not found repair for update.'
             }
         })
     }
