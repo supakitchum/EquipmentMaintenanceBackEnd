@@ -73,7 +73,7 @@ router.get('/users/repair',auth, async (req, res, next) => {
         })
     }
     if (repair) {
-      res.send({
+      res.status(200).send({
         results: {
           status: 200,
           data: repair,
@@ -109,7 +109,13 @@ router.get('/users/repair/history',auth, async (req, res, next) => {
         })
     }
     if (repair) {
-        res.send(repair)
+        res.status(200).send({
+            results: {
+                status: 200,
+                data: repair,
+                row: repair.length
+            }
+        })
     } else {
         res.send({
             results: {
