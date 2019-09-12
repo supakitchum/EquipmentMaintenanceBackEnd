@@ -7,11 +7,12 @@ const Repair = require('../model/repair')
 const jwt = require('jsonwebtoken')
 const { check, validationResult } = require('express-validator')
 const bcrypt = require('bcrypt')
+const auth = require('./auth')
 const saltRounds = 10
 var secret = 'inet'
 
 
-router.get('/technician', async (req, res, next) => {
+router.get('/technician',auth, async (req, res, next) => {
     try {
         var decoded = jwt.verify(req.headers.token, secret)
         // res.send(decoded)
@@ -35,7 +36,7 @@ router.get('/technician', async (req, res, next) => {
 router.put('/technician', [
     check('email').not().isEmpty(),
     check('type').not().isEmpty()
-], async (req, res, next) => {
+], auth, async (req, res, next) => {
     // var sub = req.body.birthday.split('/')
     // const newDate = new Date(parseInt(sub[2]) - 543, parseInt(sub[1]) - 1, parseInt(sub[0]) + 1).toISOString().slice(0, 10)
     // Validation from data
@@ -93,7 +94,7 @@ router.put('/technician', [
         })
     }
 })
-router.get('/technician/repair', async (req, res, next) => {
+router.get('/technician/repair',auth, async (req, res, next) => {
     var decoded = jwt.verify(req.headers.token, secret)
     try {
         var repair = await Repair.find({
@@ -121,7 +122,7 @@ router.get('/technician/repair', async (req, res, next) => {
     }
 })
 
-router.get('/technician/repair/history', async (req, res, next) => {
+router.get('/technician/repair/history',auth, async (req, res, next) => {
     var decoded = jwt.verify(req.headers.token, secret)
     try {
         var repair = await Repair.find({
@@ -149,7 +150,7 @@ router.get('/technician/repair/history', async (req, res, next) => {
     }
 })
 
-router.put('/technician/repair', async (req, res, next) => {
+router.put('/technician/repair',auth, async (req, res, next) => {
     var repair = await Repair.findOne({ _id: req.body._id})
     // Check duplicate
     if (repair) {
