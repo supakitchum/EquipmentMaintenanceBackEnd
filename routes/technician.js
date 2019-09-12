@@ -21,7 +21,13 @@ router.get('/technician',auth, async (req, res, next) => {
 
         if(decode){
             var data = await User.find({email: decode.email})
-            res.send(data)
+            res.status(200).send({
+                results: {
+                    status: 200,
+                    data: data,
+                    row: data.length
+                }
+            })
         }else {
             res.send('err')
         }
@@ -39,9 +45,6 @@ router.get('/technician',auth, async (req, res, next) => {
 router.put('/technician', [
     check('email').not().isEmpty()
 ], auth, async (req, res, next) => {
-    // var sub = req.body.birthday.split('/')
-    // const newDate = new Date(parseInt(sub[2]) - 543, parseInt(sub[1]) - 1, parseInt(sub[0]) + 1).toISOString().slice(0, 10)
-    // Validation from data
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(422).json({
@@ -88,7 +91,12 @@ router.put('/technician', [
                 }
             })
         }
-        res.status(201).send('Updated user success')
+        res.status(201).send({
+            results: {
+                status: 201,
+                data: 'success',
+            }
+        })
     } else {
         res.status(200).send({
             error: {
@@ -117,7 +125,13 @@ router.get('/technician/repair',auth, async (req, res, next) => {
         })
     }
     if (repair) {
-        res.send(repair)
+        res.status(200).send({
+            results: {
+                status: 200,
+                data: repair,
+                row: repair.length
+            }
+        })
     } else {
         res.send({
             results: {
@@ -147,7 +161,13 @@ router.get('/technician/repair/history',auth, async (req, res, next) => {
         })
     }
     if (repair) {
-        res.send(repair)
+        res.status(200).send({
+            results: {
+                status: 200,
+                data: repair,
+                row: repair.length
+            }
+        })
     } else {
         res.send({
             results: {
@@ -174,7 +194,12 @@ router.put('/technician/repair',auth, async (req, res, next) => {
                 }
             })
         }
-        res.status(201).send('Updated status success')
+        res.status(201).send({
+            results: {
+                status: 201,
+                data: 'Updated status success'
+            }
+        })
     } else {
         res.status(200).send({
             error: {
