@@ -11,7 +11,6 @@ const auth = require('./auth')
 var secret = 'inet'
 
 router.get('/users',auth, async (req, res, next) => {
-    var decoded = jwt.verify(req.headers.token, secret)
   try {
     var users = await User.findOne({
         email: decoded.email

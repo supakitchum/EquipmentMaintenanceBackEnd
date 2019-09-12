@@ -6,6 +6,7 @@ const Users = require('../model/users')
 const jwt = require('jsonwebtoken')
 const {check, validationResult} = require('express-validator')
 const auth = require('./auth')
+const Repair = require('../model/repair')
 var secret = 'inet'
 
 // Manage User
@@ -14,6 +15,7 @@ router.get('/users',auth, async (req, res, next) => {
   var users = await Users.find({ type: 'user'}, {
       firstname: 1,
       lastname: 1,
+      id_employee: 1,
       type: 1,
       email: 1,
       dateofbirth: 1,
@@ -174,6 +176,7 @@ router.get('/technicians',auth, async (req, res, next) => {
       lastname: 1,
       type: 1,
       email: 1,
+      id_employee: 1,
       dateofbirth: 1,
       department: 1,
       position: 1,
@@ -291,6 +294,25 @@ router.put('/technicians',auth, async (req, res, next) => {
       error: {
         status: 200,
         message: 'Not found user for update.'
+      }
+    })
+  }
+})
+
+router.get('/report', auth, async (req, res, next) => {
+  var users = await Repair.find({status: 3})
+  if (users.length > 0) {
+    res.send({
+      results: {
+        status: 200,
+        data: [users]
+      }
+    })
+  } else {
+    res.send({
+      results: {
+        status: 200,
+        data: 'Data not found.'
       }
     })
   }
