@@ -17,7 +17,7 @@ router.get('/technician',auth, async (req, res, next) => {
         var decoded = jwt.verify(req.headers.token, secret)
         // res.send(decoded)
         if(decoded){
-            var data = await User.find({_id: decoded._id})
+            var data = await User.find({email: decoded.email})
             res.send(data)
         }else {
             res.send('err')
@@ -60,7 +60,7 @@ router.put('/technician', [
             }
         })
     }
-    var user = await User.findOne({ _id: decoded._id })
+    var user = await User.findOne({ email: decoded.email })
     // Check duplicate
     if (user) {
         var hash = bcrypt.hashSync(req.body.password, saltRounds)
@@ -98,7 +98,7 @@ router.get('/technician/repair',auth, async (req, res, next) => {
     var decoded = jwt.verify(req.headers.token, secret)
     try {
         var repair = await Repair.find({
-            id_employee_user: decoded._id,
+            email: decoded.email,
             status: '2'
         })
         console.log(repair)
@@ -126,7 +126,7 @@ router.get('/technician/repair/history',auth, async (req, res, next) => {
     var decoded = jwt.verify(req.headers.token, secret)
     try {
         var repair = await Repair.find({
-            id_employee_user: decoded._id,
+            email: decoded.email,
             status: '3'
         })
         console.log(repair)
