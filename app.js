@@ -12,6 +12,7 @@ var loginRouter = require('./routes/login')
 var repairRouter = require('./routes/repair')
 var contactRouter = require('./routes/contacts')
 var adminRouter = require('./routes/admins')
+var technicianRouter = require('./routes/technician')
 require('dotenv').config()
 
 var app = express()
@@ -42,7 +43,9 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Methods", "POST,PUT,GET,DELETE")
   next();
 });
+app.use('/api/v1', [indexRouter, usersRouter, registerRouter, loginRouter,repairRouter,technicianRouter, contactRouter])
 app.use('/api/v1/admin', adminRouter)
+
 app.use('/api/v1/users', [usersRouter, repairRouter])
 app.use('/api/v1', [indexRouter, usersRouter, registerRouter, loginRouter, repairRouter, contactRouter])
 
