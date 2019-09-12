@@ -104,7 +104,7 @@ router.get('/technician/repair',auth, async (req, res, next) => {
     var decoded = jwt.verify(token, secret)
     try {
         var repair = await Repair.find({
-            id_employee_user: decoded.email,
+            id_employee_technician: decoded.email,
             status: '2'
         })
         // console.log(repair)
@@ -134,7 +134,7 @@ router.get('/technician/repair/history',auth, async (req, res, next) => {
     var decoded = jwt.verify(token, secret)
     try {
         var repair = await Repair.find({
-            id_employee_user: decoded.email,
+            id_employee_technician: decoded.email,
             status: '3'
         })
         // console.log(repair)
@@ -185,4 +185,8 @@ router.put('/technician/repair',auth, async (req, res, next) => {
     }
 })
 
+router.get('/time',auth, async (req, res, next) => {
+    var date = new date()
+    res.send(date)
+})
 module.exports = router
