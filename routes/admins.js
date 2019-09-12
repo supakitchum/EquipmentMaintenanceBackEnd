@@ -176,7 +176,6 @@ router.get('/technicians',auth, async (req, res, next) => {
       lastname: 1,
       type: 1,
       email: 1,
-      id_employee: 1,
       dateofbirth: 1,
       department: 1,
       position: 1,
@@ -316,6 +315,84 @@ router.get('/report', auth, async (req, res, next) => {
       }
     })
   }
+})
+
+//assign tech
+router.put('/repair',auth, async (req, res, next) => {
+  var repair = await Repair.findOne({ _id: req.body._id})
+  if (repair) {
+    repair.id_employee_technician = req.body.email_technician
+    repair.status = '2'
+    repair.update_date = new Date()
+    try {
+      repair.save()
+    } catch (e) {
+      res.status(400).send({
+        error: {
+          status: 400,
+          message: e
+        }
+      })
+    }
+    res.status(200).send({
+      success: {
+        status: 200,
+        message: 'Updated repair success'
+      }
+    })
+  } else {
+    res.status(200).send({
+      error: {
+        status: 200,
+        message: 'Not found repair for update.'
+      }
+    })
+  }
+})
+
+//dashboard
+router.get('/dashboard',auth, async (req, res, next) => {
+    var start = new Date();
+    start.setHours(0,0,0,0);
+
+    var end = new Date();
+    end.setHours(23,59,59,999);
+
+    //var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var repair1 = await Repair.find({
+        status: '1',
+        create_date:  {$gte: start, $lt: end}
+    })
+    console.log(new Date().getDate())
+    var repair2 = await Repair.find({
+        status: '2',
+        update_date:  {$gte: start, $lt: end}
+    })
+    var repair3 = await Repair.find({
+        status: '3'
+    })
+    var tech = await Users.find({
+        type: "technician"
+    })
+    if (repair1.length >= 0 && repair3.length >= 0 && tech.length >= 0 && repair2.length >= 0) {
+        res.send({
+            results: {
+                status: 200,
+                count_repair1: repair1.length,
+                count_repair2: repair2.length,
+                count_repair3: repair3.length,
+                count_tech: tech.length
+            }
+        })
+    } else {
+        res.send({
+            results: {
+                status: 200,
+                data: 'Data not found.'
+                //row: repair.length
+            }
+        })
+    }
 })
 
 module.exports = router

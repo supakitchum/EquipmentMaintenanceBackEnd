@@ -10,7 +10,10 @@ const { check, validationResult } = require('express-validator')
 const auth = require('./auth')
 var secret = 'inet'
 
-router.get('/users',auth, async (req, res, next) => {
+router.get('/',auth, async (req, res, next) => {
+    var token = req.headers.authorization
+    token = token.split(' ')[1]
+    var decoded = jwt.verify(token, secret)
   try {
     var users = await User.findOne({
         email: decoded.email
@@ -37,7 +40,7 @@ router.get('/users',auth, async (req, res, next) => {
 })
 
 
-router.post('/users', [
+router.post('/', [
   check('email').not().isEmpty(),
   check('type').not().isEmpty()
 ],auth, async (req, res, next) => {
@@ -102,7 +105,7 @@ router.post('/users', [
 })
 
 // Update users
-router.put('/users', [
+router.put('/', [
   check('email').not().isEmpty(),
   check('type').not().isEmpty()
 ],auth, async (req, res, next) => {
@@ -115,8 +118,9 @@ router.put('/users', [
       }
     })
   }
-
-  var decoded = jwt.verify(req.headers.token, secret)
+  var token = req.headers.authorization
+  token = token.split(' ')[1]
+  var decoded = jwt.verify(token, secret)
   var user = await User.findOne({ _id: decoded._id })
   if (user) {
     var hash = bcrypt.hashSync(req.body.password, saltRounds)

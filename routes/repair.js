@@ -57,38 +57,11 @@ router.post('/users/repair', [
 router.get('/users/repair',auth, async (req, res, next) => {
     var token = req.headers.authorization
     token = token.split(' ')[1]
-    var decode = jwt.verify(token, secret)
-    try {
-        var repair = await Repair.find({
-            id_employee_user: decode.email,
-            status: '1'
-        })
-    } catch (e) {
-        res.send({
-            results: {
-                status: 500,
-                data: [e]
-            }
-        })
-    }
-    if (repair) {
-        res.send(repair)
-    } else {
-        res.send({
-            results: {
-                status: 200,
-                data: 'Data not found.'
-            }
-        })
-    }
-})
-
-router.get('/users/repair/history',auth, async (req, res, next) => {
-    var decoded = jwt.verify(req.headers.token, secret)
+    var decoded = jwt.verify(token, secret)
     try {
         var repair = await Repair.find({
             id_employee_user: decoded.email,
-            status: '3'
+            status: {$not:{$eq:'3'}}
         })
         console.log(repair)
     } catch (e) {
@@ -111,12 +84,14 @@ router.get('/users/repair/history',auth, async (req, res, next) => {
     }
 })
 
-router.get('/users/repair',auth, async (req, res, next) => {
-    var decoded = jwt.verify(req.headers.token, secret)
+router.get('/users/repair/history',auth, async (req, res, next) => {
+    var token = req.headers.authorization
+    token = token.split(' ')[1]
+    var decoded = jwt.verify(token, secret)
     try {
         var repair = await Repair.find({
             id_employee_user: decoded.email,
-            status: '1'
+            status: '3'
         })
         console.log(repair)
     } catch (e) {

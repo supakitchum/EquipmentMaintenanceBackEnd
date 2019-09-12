@@ -43,6 +43,7 @@ app.use(function(req, res, next) {
   next();
 });
 app.use('/api/v1/admin', adminRouter)
+app.use('/api/v1/users', [usersRouter, repairRouter])
 app.use('/api/v1', [indexRouter, usersRouter, registerRouter, loginRouter, repairRouter, contactRouter])
 
 // catch 404 and forward to error handler
