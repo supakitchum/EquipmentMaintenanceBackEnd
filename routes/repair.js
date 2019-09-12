@@ -5,6 +5,7 @@ const User = require('../model/users')
 const Repair = require('../model/repair')
 const jwt = require('jsonwebtoken')
 const { check, validationResult } = require('express-validator')
+const faker = require('faker');
 const auth = require('./auth')
 var secret = 'inet'
 
@@ -124,6 +125,26 @@ router.get('/users/repair/history',auth, async (req, res, next) => {
             }
         })
     }
+})
+
+router.post('/repair/fake',auth, async (req, res, next) => {
+    var token = req.headers.authorization
+    token = token.split(' ')[1]
+    var decoded = jwt.verify(token, secret)
+    for (let id=1; id <= 5; id++) {
+        var repair = new Repair({
+            title: faker.lorem.sentence(),
+            detail: faker.lorem.paragraph(),
+            position_repair: faker.address.city(),
+            image: faker.image.imageUrl(),
+            status: "1",
+            create_date: new Date(),
+            id_employee_user: decoded.email
+        })
+        repair.save()
+
+    }
+    res.send('success')
 })
 
 module.exports = router

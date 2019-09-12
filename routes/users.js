@@ -8,6 +8,8 @@ const bcrypt = require('bcrypt')
 const saltRounds = 10
 const { check, validationResult } = require('express-validator')
 const auth = require('./auth')
+const faker = require('faker');
+const fs = require('fs')
 var secret = 'inet'
 
 router.get('/',auth, async (req, res, next) => {
@@ -159,5 +161,26 @@ router.put('/', [
       }
     })
   }
+})
+
+router.post('/fake',auth, async (req, res, next) => {
+    for (let id=1; id <= 5; id++) {
+        var hash = bcrypt.hashSync('123456', saltRounds)
+        var newUser = new User({
+            firstname: faker.name.firstName(),
+            lastname: faker.name.lastName(),
+            id_employee: faker.random.number(99999),
+            position: faker.name.jobTitle(),
+            department: 'CNX',
+            dateofbirth: faker.date.past(10),
+            phone: faker.phone.phoneNumberFormat(0),
+            email: faker.internet.email(),
+            password: hash,
+            type: 'technician'
+        })
+        newUser.save()
+
+    }
+    res.send('success')
 })
 module.exports = router
