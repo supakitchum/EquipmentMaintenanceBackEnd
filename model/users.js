@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 const User = new Schema({
   firstname: { type: String, default: null },
   lastname: { type: String, default: null },
+  id_employee: String,
   type: String,
   email: String,
   password: { type: String, default: null },
