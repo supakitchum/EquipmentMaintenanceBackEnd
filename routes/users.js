@@ -28,7 +28,13 @@ router.get('/',auth, async (req, res, next) => {
     })
   }
   if (users) {
-    res.send(users)
+    res.status(200).send({
+      results: {
+        status: 200,
+        data: users,
+        row: users.length
+      }
+    })
   } else {
     res.send({
       results: {
