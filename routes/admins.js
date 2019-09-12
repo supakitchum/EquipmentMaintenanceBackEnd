@@ -5,22 +5,12 @@ const Skills = require('../model/skills')
 const Users = require('../model/users')
 const jwt = require('jsonwebtoken')
 const {check, validationResult} = require('express-validator')
+const auth = require('./auth')
 var secret = 'inet'
 
 // Manage User
 // Get all users
-router.get('/users', async (req, res, next) => {
-  try {
-    var decoded = jwt.verify(req.headers.token, secret)
-  } catch (e) {
-    await AccessToken.deleteOne({ token: req.headers.token })
-    res.status(402).send({
-      error: {
-        status: 402,
-        message: 'Unauthorized'
-      }
-    })
-  }
+router.get('/users',auth, async (req, res, next) => {
   var users = await Users.find({ type: 'user'}, {
       firstname: 1,
       lastname: 1,
@@ -52,18 +42,7 @@ router.get('/users', async (req, res, next) => {
   }
 })
 // Delete user
-router.delete('/users', async (req, res, next) => {
-  try {
-    var decoded = jwt.verify(req.headers.token, secret)
-  } catch (e) {
-    await AccessToken.deleteOne({ token: req.headers.token })
-    res.status(402).send({
-      error: {
-        status: 402,
-        message: 'Unauthorized'
-      }
-    })
-  }
+router.delete('/users', auth , async (req, res, next) => {
   try {
     await AccessToken.deleteOne({ email: req.body.email })
     res.status(200).send({
@@ -82,8 +61,8 @@ router.delete('/users', async (req, res, next) => {
   }
 })
 // Get detail of user by username
-router.get('/users/:username', async (req, res, next) => {
-  var users = await Users.find({username: req.params.username}, {
+router.get('/users/:email', auth, async (req, res, next) => {
+  var users = await Users.find({email: req.params.email}, {
       firstname: 1,
       lastname: 1,
       type: 1,
@@ -112,19 +91,8 @@ router.get('/users/:username', async (req, res, next) => {
   }
 })
 // Add users
-router.post('/users', async (req, res, next) => {
-  try {
-    var decoded = jwt.verify(req.headers.token, secret)
-  } catch (e) {
-    await AccessToken.deleteOne({ token: req.headers.token })
-    res.status(402).send({
-      error: {
-        status: 402,
-        message: 'Unauthorized'
-      }
-    })
-  }
-  var user = await User.findOne({
+router.post('/users',auth, async (req, res, next) => {
+  var user = await Users.findOne({
     email: req.body.email
   })
   if (user) {
@@ -161,17 +129,7 @@ router.post('/users', async (req, res, next) => {
   }
 })
 // Update users
-router.put('/users', async (req, res, next) => {
-  try {
-    var decoded = jwt.verify(req.headers.token, secret)
-  } catch (e) {
-    res.status(402).send({
-      error: {
-        status: 402,
-        message: 'Unauthorized'
-      }
-    })
-  }
+router.put('/users',auth, async (req, res, next) => {
   var user = await Users.findOne({ email: req.body.email})
   // Check duplicate
   if (user) {
@@ -210,18 +168,7 @@ router.put('/users', async (req, res, next) => {
 
 // Technician
 // Get All
-router.get('/technicians', async (req, res, next) => {
-  try {
-    var decoded = jwt.verify(req.headers.token, secret)
-  } catch (e) {
-    await AccessToken.deleteOne({ token: req.headers.token })
-    res.status(402).send({
-      error: {
-        status: 402,
-        message: 'Unauthorized'
-      }
-    })
-  }
+router.get('/technicians',auth, async (req, res, next) => {
   var users = await Users.find({ type: 'technician' }, {
       firstname: 1,
       lastname: 1,
@@ -253,18 +200,7 @@ router.get('/technicians', async (req, res, next) => {
   }
 })
 // Delete
-router.delete('/technicians', async (req, res, next) => {
-  try {
-    var decoded = jwt.verify(req.headers.token, secret)
-  } catch (e) {
-    await AccessToken.deleteOne({ token: req.headers.token })
-    res.status(402).send({
-      error: {
-        status: 402,
-        message: 'Unauthorized'
-      }
-    })
-  }
+router.delete('/technicians',auth, async (req, res, next) => {
   try {
     await AccessToken.deleteOne({ email: req.body.email })
     res.status(200).send({
@@ -284,18 +220,7 @@ router.delete('/technicians', async (req, res, next) => {
 })
 
 //Add technician
-router.post('/technicians', async (req, res, next) => {
-  try {
-    var decoded = jwt.verify(req.headers.token, secret)
-  } catch (e) {
-    await AccessToken.deleteOne({ token: req.headers.token })
-    res.status(402).send({
-      error: {
-        status: 402,
-        message: 'Unauthorized'
-      }
-    })
-  }
+router.post('/technicians',auth, async (req, res, next) => {
   var user = await User.findOne({
     email: req.body.email
   })
@@ -334,17 +259,7 @@ router.post('/technicians', async (req, res, next) => {
 })
 
 // Update
-router.put('/technicians', async (req, res, next) => {
-  try {
-    var decoded = jwt.verify(req.headers.token, secret)
-  } catch (e) {
-    res.status(402).send({
-      error: {
-        status: 402,
-        message: 'Unauthorized'
-      }
-    })
-  }
+router.put('/technicians',auth, async (req, res, next) => {
   var user = await Users.findOne({ email: req.body.email})
   // Check duplicate
   if (user) {

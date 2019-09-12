@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 const { check, validationResult } = require('express-validator')
+const auth = require('./auth')
 var secret = 'inet'
 
 router.get('/users', async (req, res, next) => {

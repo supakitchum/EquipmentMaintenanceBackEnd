@@ -11,7 +11,6 @@ var registerRouter = require('./routes/register')
 var loginRouter = require('./routes/login')
 var repairRouter = require('./routes/repair')
 var contactRouter = require('./routes/contacts')
-var technicianRouter = require('./routes/technician')
 var adminRouter = require('./routes/admins')
 require('dotenv').config()
 
@@ -39,11 +38,13 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Authorization, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "POST,PUT,GET,DELETE")
   next();
 });
 app.use('/api/v1', [indexRouter, usersRouter, registerRouter, loginRouter,repairRouter,technicianRouter, contactRouter])
 app.use('/api/v1/admin', adminRouter)
+>>>>>>>>> Temporary merge branch 2
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
