@@ -6,6 +6,7 @@ const Users = require('../model/users')
 const jwt = require('jsonwebtoken')
 const {check, validationResult} = require('express-validator')
 const auth = require('./auth')
+const Repair = require('../model/repair')
 var secret = 'inet'
 
 // Manage User
@@ -291,6 +292,39 @@ router.put('/technicians',auth, async (req, res, next) => {
       error: {
         status: 200,
         message: 'Not found user for update.'
+      }
+    })
+  }
+})
+
+router.put('/repair',auth, async (req, res, next) => {
+  var repair = await Repair.findOne({ _id: req.body._id})
+  // Check duplicate
+  if (repair) {
+    // eslint-disable-next-line no-sequences
+    repair.id_employee_technician = req.body.email_technician
+    repair.status = '2'
+    try {
+      repair.save()
+    } catch (e) {
+      res.status(400).send({
+        error: {
+          status: 400,
+          message: e
+        }
+      })
+    }
+    res.status(200).send({
+      success: {
+        status: 200,
+        message: 'Updated repair success'
+      }
+    })
+  } else {
+    res.status(200).send({
+      error: {
+        status: 200,
+        message: 'Not found repair for update.'
       }
     })
   }

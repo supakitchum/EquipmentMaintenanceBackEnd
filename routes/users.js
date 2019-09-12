@@ -10,7 +10,7 @@ const { check, validationResult } = require('express-validator')
 const auth = require('./auth')
 var secret = 'inet'
 
-router.get('/users',auth, async (req, res, next) => {
+router.get('/',auth, async (req, res, next) => {
     var decoded = jwt.verify(req.headers.token, secret)
   try {
     var users = await User.findOne({
@@ -38,7 +38,7 @@ router.get('/users',auth, async (req, res, next) => {
 })
 
 
-router.post('/users', [
+router.post('/', [
   check('email').not().isEmpty(),
   check('type').not().isEmpty()
 ],auth, async (req, res, next) => {
@@ -103,7 +103,7 @@ router.post('/users', [
 })
 
 // Update users
-router.put('/users', [
+router.put('/', [
   check('email').not().isEmpty(),
   check('type').not().isEmpty()
 ],auth, async (req, res, next) => {

@@ -24,18 +24,21 @@ router.post('/users/repair', [
         })
     }
 
-    try {
-        var decoded = jwt.verify(req.headers.token, secret)
-        console.log(decoded)
-    } catch (e) {
-        await AccessToken.deleteOne({ token: req.headers.token })
-        res.status(402).send({
-            error: {
-                status: 402,
-                message: 'Unauthorized'
-            }
-        })
-    }
+    // try {
+    //     var decoded = jwt.verify(req.headers.token, secret)
+    //     console.log(decoded)
+    // } catch (e) {
+    //     await AccessToken.deleteOne({ token: req.headers.token })
+    //     res.status(402).send({
+    //         error: {
+    //             status: 402,
+    //             message: 'Unauthorized'
+    //         }
+    //     })
+    // }
+
+    var decoded = jwt.verify(req.headers.token, secret)
+    console.log(decoded)
 
     var newRepair = new Repair({
         title: req.body.title,
@@ -64,7 +67,7 @@ router.get('/users/repair',auth, async (req, res, next) => {
     try {
         var repair = await Repair.find({
             id_employee_user: decoded.email,
-            status: '1'
+            status: {$not:{$eq:'3'}}
         })
         console.log(repair)
     } catch (e) {
