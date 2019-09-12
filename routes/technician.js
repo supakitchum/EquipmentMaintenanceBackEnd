@@ -14,10 +14,13 @@ var secret = 'inet'
 
 router.get('/technician',auth, async (req, res, next) => {
     try {
-        var decoded = jwt.verify(req.headers.token, secret)
-        // res.send(decoded)
-        if(decoded){
-            var data = await User.find({email: decoded.email})
+        var token = req.headers.authorization
+        token = token.split(' ')[1]
+        var decode = jwt.verify(token, secret)
+        // res.send(decode)
+
+        if(decode){
+            var data = await User.find({email: decode.email})
             res.send(data)
         }else {
             res.send('err')
@@ -34,8 +37,7 @@ router.get('/technician',auth, async (req, res, next) => {
 })
 
 router.put('/technician', [
-    check('email').not().isEmpty(),
-    check('type').not().isEmpty()
+    check('email').not().isEmpty()
 ], auth, async (req, res, next) => {
     // var sub = req.body.birthday.split('/')
     // const newDate = new Date(parseInt(sub[2]) - 543, parseInt(sub[1]) - 1, parseInt(sub[0]) + 1).toISOString().slice(0, 10)
@@ -51,7 +53,9 @@ router.put('/technician', [
     }
 
     try {
-        var decoded = jwt.verify(req.headers.token, secret)
+        var token = req.headers.authorization
+        token = token.split(' ')[1]
+        var decoded = jwt.verify(token, secret)
     } catch (e) {
         res.status(402).send({
             error: {
@@ -60,7 +64,7 @@ router.put('/technician', [
             }
         })
     }
-    var user = await User.findOne({ eid_employee_user: decoded.email })
+    var user = await User.findOne({ email: decoded.email })
     // Check duplicate
     if (user) {
         var hash = bcrypt.hashSync(req.body.password, saltRounds)
@@ -95,13 +99,15 @@ router.put('/technician', [
     }
 })
 router.get('/technician/repair',auth, async (req, res, next) => {
-    var decoded = jwt.verify(req.headers.token, secret)
+    var token = req.headers.authorization
+    token = token.split(' ')[1]
+    var decoded = jwt.verify(token, secret)
     try {
         var repair = await Repair.find({
             id_employee_user: decoded.email,
             status: '2'
         })
-        console.log(repair)
+        // console.log(repair)
     } catch (e) {
         res.send({
             results: {
@@ -123,13 +129,15 @@ router.get('/technician/repair',auth, async (req, res, next) => {
 })
 
 router.get('/technician/repair/history',auth, async (req, res, next) => {
-    var decoded = jwt.verify(req.headers.token, secret)
+    var token = req.headers.authorization
+    token = token.split(' ')[1]
+    var decoded = jwt.verify(token, secret)
     try {
         var repair = await Repair.find({
             id_employee_user: decoded.email,
             status: '3'
         })
-        console.log(repair)
+        // console.log(repair)
     } catch (e) {
         res.send({
             results: {

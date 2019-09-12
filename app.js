@@ -12,6 +12,7 @@ var loginRouter = require('./routes/login')
 var repairRouter = require('./routes/repair')
 var contactRouter = require('./routes/contacts')
 var adminRouter = require('./routes/admins')
+var technicianRouter = require('./routes/technician')
 require('dotenv').config()
 
 var app = express()
@@ -44,7 +45,7 @@ app.use(function(req, res, next) {
 });
 app.use('/api/v1', [indexRouter, usersRouter, registerRouter, loginRouter,repairRouter,technicianRouter, contactRouter])
 app.use('/api/v1/admin', adminRouter)
->>>>>>>>> Temporary merge branch 2
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
