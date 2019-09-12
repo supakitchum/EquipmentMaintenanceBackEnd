@@ -18,12 +18,13 @@ router.post('/login', async (req, res, next) => {
           _id: user.id,
           email: user.email,
           type: user.type
-        }, secret, { expiresIn: 60 * 120 })
+        }, secret, { expiresIn: 60 * 3000 })
         await AccessToken.update({ userid: user.id }, { userid: user.id, token: token }, { upsert: true })
         res.send({
           results: {
             status: 200,
-            token: token
+            token: token,
+            type: user.type
           }
         })
       } else {
