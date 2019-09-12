@@ -37,7 +37,9 @@ router.post('/users/repair', [
     //     })
     // }
 
-    var decoded = jwt.verify(req.headers.token, secret)
+    var token = req.headers.authorization
+    token = token.split(' ')[1]
+    var decoded = jwt.verify(token, secret)
     console.log(decoded)
 
     var newRepair = new Repair({
@@ -63,7 +65,9 @@ router.post('/users/repair', [
 })
 
 router.get('/users/repair',auth, async (req, res, next) => {
-    var decoded = jwt.verify(req.headers.token, secret)
+    var token = req.headers.authorization
+    token = token.split(' ')[1]
+    var decoded = jwt.verify(token, secret)
     try {
         var repair = await Repair.find({
             id_employee_user: decoded.email,
@@ -91,7 +95,9 @@ router.get('/users/repair',auth, async (req, res, next) => {
 })
 
 router.get('/users/repair/history',auth, async (req, res, next) => {
-    var decoded = jwt.verify(req.headers.token, secret)
+    var token = req.headers.authorization
+    token = token.split(' ')[1]
+    var decoded = jwt.verify(token, secret)
     try {
         var repair = await Repair.find({
             id_employee_user: decoded.email,

@@ -11,7 +11,9 @@ const auth = require('./auth')
 var secret = 'inet'
 
 router.get('/',auth, async (req, res, next) => {
-    var decoded = jwt.verify(req.headers.token, secret)
+    var token = req.headers.authorization
+    token = token.split(' ')[1]
+    var decoded = jwt.verify(token, secret)
   try {
     var users = await User.findOne({
         email: decoded.email
@@ -116,8 +118,10 @@ router.put('/', [
       }
     })
   }
+  var token = req.headers.authorization
+  token = token.split(' ')[1]
+  var decoded = jwt.verify(token, secret)
 
-  var decoded = jwt.verify(req.headers.token, secret)
   var user = await User.findOne({ _id: decoded._id })
   if (user) {
     var hash = bcrypt.hashSync(req.body.password, saltRounds)

@@ -297,13 +297,13 @@ router.put('/technicians',auth, async (req, res, next) => {
   }
 })
 
+//assign tech
 router.put('/repair',auth, async (req, res, next) => {
   var repair = await Repair.findOne({ _id: req.body._id})
-  // Check duplicate
   if (repair) {
-    // eslint-disable-next-line no-sequences
     repair.id_employee_technician = req.body.email_technician
     repair.status = '2'
+    repair.update_date = new Date()
     try {
       repair.save()
     } catch (e) {
@@ -328,6 +328,51 @@ router.put('/repair',auth, async (req, res, next) => {
       }
     })
   }
+})
+
+//dashboard
+router.get('/dashboard',auth, async (req, res, next) => {
+    var start = new Date();
+    start.setHours(0,0,0,0);
+
+    var end = new Date();
+    end.setHours(23,59,59,999);
+
+    //var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var repair1 = await Repair.find({
+        status: '1',
+        create_date:  {$gte: start, $lt: end}
+    })
+    console.log(new Date().getDate())
+    var repair2 = await Repair.find({
+        status: '2',
+        update_date:  {$gte: start, $lt: end}
+    })
+    var repair3 = await Repair.find({
+        status: '3'
+    })
+    var tech = await Users.find({
+        type: "technician"
+    })
+    if (repair1.length >= 0 && repair3.length >= 0 && tech.length >= 0 && repair2.length >= 0) {
+        res.send({
+            results: {
+                status: 200,
+                count_repair1: repair1.length,
+                count_repair2: repair2.length,
+                count_repair3: repair3.length,
+                count_tech: tech.length
+            }
+        })
+    } else {
+        res.send({
+            results: {
+                status: 200,
+                data: 'Data not found.'
+                //row: repair.length
+            }
+        })
+    }
 })
 
 module.exports = router
