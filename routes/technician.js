@@ -17,7 +17,7 @@ router.get('/technician',auth, async (req, res, next) => {
         var decoded = jwt.verify(req.headers.token, secret)
         // res.send(decoded)
         if(decoded){
-            var data = await User.find({id_employee_user: decoded.email})
+            var data = await User.find({email: decoded.email})
             res.send(data)
         }else {
             res.send('err')
